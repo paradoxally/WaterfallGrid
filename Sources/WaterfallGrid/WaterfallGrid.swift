@@ -38,7 +38,8 @@ public struct WaterfallGrid<Data, ID, Content>: View where Data : RandomAccessCo
                         DispatchQueue.main.asyncAfter(deadline: .now() + updateDelay) {
                             let (alignmentGuides, gridHeight) = self.alignmentsAndGridHeight(
                                 columns: self.style.columns,
-                                spacing: self.style.spacing,
+                                rowsSpacing: self.style.rowsSpacing,
+                                columnsSpacing: self.style.columnsSpacing,
                                 scrollDirection: self.scrollOptions.direction,
                                 preferences: preferences
                             )
@@ -55,26 +56,31 @@ public struct WaterfallGrid<Data, ID, Content>: View where Data : RandomAccessCo
     }
 
     private func grid(in geometry: GeometryProxy) -> some View {
-        let columnWidth = self.columnWidth(columns: style.columns, spacing: style.spacing,
-                                           scrollDirection: scrollOptions.direction, geometrySize: geometry.size)
-        return
-            ZStack(alignment: .topLeading) {
-                ForEach(data, id: self.dataId) { element in
-                    self.content(element)
-                        .frame(width: self.scrollOptions.direction == .vertical ? columnWidth : nil,
-                               height: self.scrollOptions.direction == .horizontal ? columnWidth : nil)
-                        .background(PreferenceSetter(id: element[keyPath: self.dataId]))
-                        .alignmentGuide(.top, computeValue: { _ in self.alignmentGuides[element[keyPath: self.dataId]]?.y ?? 0 })
-                        .alignmentGuide(.leading, computeValue: { _ in self.alignmentGuides[element[keyPath: self.dataId]]?.x ?? 0 })
-                        .opacity(self.alignmentGuides[element[keyPath: self.dataId]] != nil ? 1 : 0)
-                }
+        let columnWidth = self.columnWidth(columns: style.columns,
+                                           spacing: style.columnsSpacing,
+                                           scrollDirection: scrollOptions.direction,
+                                           geometrySize: geometry.size)
+        return ZStack(alignment: .topLeading) {
+            ForEach(data, id: self.dataId) { element in
+                self.content(element)
+                    .frame(width: self.scrollOptions.direction == .vertical ? columnWidth : nil,
+                           height: self.scrollOptions.direction == .horizontal ? columnWidth : nil)
+                    .background(PreferenceSetter(id: element[keyPath: self.dataId]))
+                    .alignmentGuide(.top, computeValue: { _ in self.alignmentGuides[element[keyPath: self.dataId]]?.y ?? 0 })
+                    .alignmentGuide(.leading, computeValue: { _ in self.alignmentGuides[element[keyPath: self.dataId]]?.x ?? 0 })
+                    .opacity(self.alignmentGuides[element[keyPath: self.dataId]] != nil ? 1 : 0)
             }
-            .animation(self.loaded ? self.style.animation : nil, value: UUID())
+        }
+        .animation(self.loaded ? self.style.animation : nil, value: UUID())
     }
 
     // MARK: - Helpers
 
-    func alignmentsAndGridHeight(columns: Int, spacing: CGFloat, scrollDirection: Axis.Set, preferences: [ElementPreferenceData]) -> ([AnyHashable: CGPoint], CGFloat) {
+    func alignmentsAndGridHeight(columns: Int,
+                                 rowsSpacing: CGFloat,
+                                 columnsSpacing: CGFloat,
+                                 scrollDirection: Axis.Set,
+                                 preferences: [ElementPreferenceData]) -> ([AnyHashable: CGPoint], CGFloat) {
         var heights = Array(repeating: CGFloat(0), count: columns)
         var alignmentGuides = [AnyHashable: CGPoint]()
 
@@ -82,17 +88,17 @@ public struct WaterfallGrid<Data, ID, Content>: View where Data : RandomAccessCo
             if let minValue = heights.min(), let indexMin = heights.firstIndex(of: minValue) {
                 let preferenceSizeWidth = scrollDirection == .vertical ? preference.size.width : preference.size.height
                 let preferenceSizeHeight = scrollDirection == .vertical ? preference.size.height : preference.size.width
-                let width = preferenceSizeWidth * CGFloat(indexMin) + CGFloat(indexMin) * spacing
+                let width = preferenceSizeWidth * CGFloat(indexMin) + CGFloat(indexMin) * columnsSpacing
                 let height = heights[indexMin]
                 let offset = CGPoint(x: 0 - (scrollDirection == .vertical ? width : height),
                                      y: 0 - (scrollDirection == .vertical ? height : width))
-                heights[indexMin] += preferenceSizeHeight + spacing
+                heights[indexMin] += preferenceSizeHeight + rowsSpacing
                 alignmentGuides[preference.id] = offset
             }
         }
-        
-        let gridHeight = max(0, (heights.max() ?? spacing) - spacing)
-        
+
+        let gridHeight = max(0, (heights.max() ?? rowsSpacing) - rowsSpacing)
+
         return (alignmentGuides, gridHeight)
     }
 

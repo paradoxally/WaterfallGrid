@@ -24,7 +24,8 @@ struct RectanglesGrid: View {
                 .gridStyle(
                     columnsInPortrait: Int(settings.columnsInPortrait),
                     columnsInLandscape: Int(settings.columnsInLandscape),
-                    spacing: CGFloat(settings.spacing),
+                    rowsSpacing: CGFloat(settings.rowsSpacing),
+                    columnsSpacing: CGFloat(settings.columnsSpacing),
                     animation: settings.animation
                 )
                 .scrollOptions(direction: scrollDirection)

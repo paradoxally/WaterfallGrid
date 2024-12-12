@@ -10,7 +10,8 @@ import SwiftUI
 struct Settings {
     var columnsInPortrait: Double
     var columnsInLandscape: Double
-    var spacing: Double
+    var rowsSpacing: Double
+    var columnsSpacing: Double
     var padding: EdgeInsets
     var scrollDirection: Axis
     var showsIndicators: Bool
@@ -36,7 +37,8 @@ struct Settings {
             return Settings(
                 columnsInPortrait: 4,
                 columnsInLandscape: 5,
-                spacing: 8,
+                rowsSpacing: 8,
+                columnsSpacing: 8,
                 padding: .init(top: 8, leading: 8, bottom: 8, trailing: 8),
                 scrollDirection: scrollDirection,
                 showsIndicators: true,
@@ -48,7 +50,8 @@ struct Settings {
             return Settings(
                 columnsInPortrait: 2,
                 columnsInLandscape: 4,
-                spacing: 4,
+                rowsSpacing: 8,
+                columnsSpacing: 8,
                 padding: .init(),
                 scrollDirection: scrollDirection,
                 showsIndicators: true,
@@ -60,7 +63,8 @@ struct Settings {
             return Settings(
                 columnsInPortrait: 2,
                 columnsInLandscape: 4,
-                spacing: 8,
+                rowsSpacing: 8,
+                columnsSpacing: 8,
                 padding: .init(top: 8, leading: 8, bottom: 8, trailing: 8),
                 scrollDirection: scrollDirection,
                 showsIndicators: true,

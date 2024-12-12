@@ -36,7 +36,8 @@ struct SettingsView: View {
                 }
 
                 Section(header: Text("Spacing")) {
-                    self.valueSelector(self.$newSettings.spacing, bounds: 0...40, step: 1, label: "Spacing")
+                    self.valueSelector(self.$newSettings.rowsSpacing, bounds: 0...40, step: 1, label: "Rows Spacing")
+                    self.valueSelector(self.$newSettings.columnsSpacing, bounds: 0...40, step: 1, label: "Columns Spacing")
                 }
 
                 Section(header: Text("Padding")) {
@@ -116,10 +117,16 @@ struct SettingsView: View {
 }
 
 struct SettingsView_Previews: PreviewProvider {
-    @State static var settings: Settings = Settings(columnsInPortrait: 2, columnsInLandscape: 5, spacing: 8,
-                                                    padding: .init(), scrollDirection: .vertical,
-                                                    showsIndicators: true, animation: .default, animationSpeed: 1)
-    
+    @State static var settings: Settings = Settings(columnsInPortrait: 2,
+                                                    columnsInLandscape: 5,
+                                                    rowsSpacing: 8,
+                                                    columnsSpacing: 8,
+                                                    padding: .init(),
+                                                    scrollDirection: .vertical,
+                                                    showsIndicators: true,
+                                                    animation: .default,
+                                                    animationSpeed: 1)
+
     static var previews: some View {
         SettingsView(settings: $settings, screen: .images, isPresented: .constant(true))
     }

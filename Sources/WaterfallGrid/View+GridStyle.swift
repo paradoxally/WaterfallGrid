@@ -13,17 +13,20 @@ extension View {
     /// Sets the style for `WaterfallGrid` within the environment of `self`.
     ///
     /// - Parameter columns: The number of columns of the grid. The default is `2`.
-    /// - Parameter spacing: The distance between adjacent items. The default is `8`.
+    /// - Parameter rowsSpacing: The distance between adjacent row items. The default is `8`.
+    /// - Parameter columnsSpacing: The distance between adjacent column items. The default is `8`.
     /// - Parameter animation: The animation to apply when data change. If `animation` is `nil`, the grid doesn't animate.
     public func gridStyle(
         columns: Int = 2,
-        spacing: CGFloat = 8,
+        rowsSpacing: CGFloat = 8,
+        columnsSpacing: CGFloat = 8,
         animation: Animation? = .default
     ) -> some View {
-        let style = GridSyle(
+        let style = GridStyle(
             columnsInPortrait: columns,
             columnsInLandscape: columns,
-            spacing: spacing,
+            rowsSpacing: rowsSpacing,
+            columnsSpacing: columnsSpacing,
             animation: animation
         )
         return self.environment(\.gridStyle, style)
@@ -33,7 +36,8 @@ extension View {
     ///
     /// - Parameter columnsInPortrait: The number of columns of the grid when the device is in a portrait orientation. The default is `2`.
     /// - Parameter columnsInLandscape: The number of columns of the grid when the device is in a landscape orientation The default is `2`.
-    /// - Parameter spacing: The distance between adjacent items. The default is `8`.
+    /// - Parameter rowsSpacing: The distance between adjacent row items. The default is `8`.
+    /// - Parameter columnsSpacing: The distance between adjacent column items. The default is `8`.
     /// - Parameter animation: The animation to apply when data change. If `animation` is `nil`, the grid doesn't animate.
     @available(OSX, unavailable)
     @available(tvOS, unavailable)
@@ -42,13 +46,15 @@ extension View {
     public func gridStyle(
         columnsInPortrait: Int = 2,
         columnsInLandscape: Int = 2,
-        spacing: CGFloat = 8,
+        rowsSpacing: CGFloat = 8,
+        columnsSpacing: CGFloat = 8,
         animation: Animation? = .default
     ) -> some View {
-        let style = GridSyle(
+        let style = GridStyle(
             columnsInPortrait: columnsInPortrait,
             columnsInLandscape: columnsInLandscape,
-            spacing: spacing,
+            rowsSpacing: rowsSpacing,
+            columnsSpacing: columnsSpacing,
             animation: animation
         )
         return self.environment(\.gridStyle, style)

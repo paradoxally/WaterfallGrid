@@ -6,11 +6,12 @@
 
 import SwiftUI
 
-struct GridSyle {
+struct GridStyle {
     @PositiveNumber var columnsInPortrait: Int
     @PositiveNumber var columnsInLandscape: Int
 
-    let spacing: CGFloat
+    let rowsSpacing: CGFloat
+    let columnsSpacing: CGFloat
     let animation: Animation?
 
     var columns: Int {
@@ -26,12 +27,15 @@ struct GridSyle {
 }
 
 struct GridStyleKey: EnvironmentKey {
-    static let defaultValue = GridSyle(columnsInPortrait: 2, columnsInLandscape: 2,
-                                       spacing: 8, animation: .default)
+    static let defaultValue = GridStyle(columnsInPortrait: 2,
+                                        columnsInLandscape: 2,
+                                        rowsSpacing: 8,
+                                        columnsSpacing: 8,
+                                        animation: .default)
 }
 
 extension EnvironmentValues {
-    var gridStyle: GridSyle {
+    var gridStyle: GridStyle {
         get { self[GridStyleKey.self] }
         set { self[GridStyleKey.self] = newValue }
     }
