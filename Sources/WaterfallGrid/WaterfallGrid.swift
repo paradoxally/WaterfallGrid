@@ -18,6 +18,7 @@ public struct WaterfallGrid<Data, ID, Content>: View where Data : RandomAccessCo
     private let content: (Data.Element) -> Content
 
     @State private var loaded = false
+    @State private var pendingUpdates = false
     @State private var gridHeight: CGFloat = 0
 
     @State private var alignmentGuides = [AnyHashable: CGPoint]() {
@@ -28,18 +29,25 @@ public struct WaterfallGrid<Data, ID, Content>: View where Data : RandomAccessCo
         VStack {
             GeometryReader { geometry in
                 self.grid(in: geometry)
-                    .onPreferenceChange(ElementPreferenceKey.self, perform: { preferences in
-                        DispatchQueue.global(qos: .userInteractive).async {
-                            let (alignmentGuides, gridHeight) = self.alignmentsAndGridHeight(columns: self.style.columns,
-                                                                                             spacing: self.style.spacing,
-                                                                                             scrollDirection: self.scrollOptions.direction,
-                                                                                             preferences: preferences)
-                            DispatchQueue.main.async {
-                                self.alignmentGuides = alignmentGuides
-                                self.gridHeight = gridHeight
-                            }
+                    .onPreferenceChange(ElementPreferenceKey.self) { preferences in
+                        guard !self.pendingUpdates else { return }
+
+                        self.pendingUpdates = true
+                        let updateDelay: TimeInterval = 0.05
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + updateDelay) {
+                            let (alignmentGuides, gridHeight) = self.alignmentsAndGridHeight(
+                                columns: self.style.columns,
+                                spacing: self.style.spacing,
+                                scrollDirection: self.scrollOptions.direction,
+                                preferences: preferences
+                            )
+
+                            self.alignmentGuides = alignmentGuides
+                            self.gridHeight = gridHeight
+                            self.pendingUpdates = false
                         }
-                    })
+                    }
             }
         }
         .frame(width: self.scrollOptions.direction == .horizontal ? gridHeight : nil,
